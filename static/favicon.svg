@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="faviconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#db2777;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Main gradient background -->
+  <rect width="100" height="100" fill="url(#faviconGrad)" rx="16"/>
+  
+  <!-- Book pages - open book style -->
+  <g transform="translate(28, 28)">
+    <!-- Left page -->
+    <rect x="0" y="0" width="16" height="44" rx="2" fill="white" opacity="0.9"/>
+    <!-- Right page -->
+    <rect x="18" y="0" width="16" height="44" rx="2" fill="white" opacity="0.85"/>
+    <!-- Spine line -->
+    <line x1="16" y1="2" x2="16" y2="42" stroke="#f3f4f6" stroke-width="1"/>
+    <!-- Lines on left -->
+    <line x1="4" y1="8" x2="12" y2="8" stroke="#e5e7eb" stroke-width="1.5" opacity="0.7"/>
+    <line x1="4" y1="14" x2="12" y2="14" stroke="#e5e7eb" stroke-width="1.5" opacity="0.7"/>
+    <line x1="4" y1="20" x2="12" y2="20" stroke="#e5e7eb" stroke-width="1.5" opacity="0.7"/>
+    <!-- Lines on right -->
+    <line x1="22" y1="8" x2="30" y2="8" stroke="#e5e7eb" stroke-width="1.5" opacity="0.7"/>
+    <line x1="22" y1="14" x2="30" y2="14" stroke="#e5e7eb" stroke-width="1.5" opacity="0.7"/>
+    <line x1="22" y1="20" x2="30" y2="20" stroke="#e5e7eb" stroke-width="1.5" opacity="0.7"/>
+  </g>
+  
+  <!-- Checkmark accent -->
+  <path d="M42 58 L50 66 L68 48" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+    <line x1="25" y1="21" x2="35" y2="21" stroke="#a78bfa" stroke-width="1" opacity="0.6"/>
+  </g>
+  
+  <!-- AI/Genetic Algorithm circle (spiral DNA) -->
+  <g transform="translate(58, 35)">
+    <circle cx="0" cy="0" r="12" fill="none" stroke="white" stroke-width="1.5" opacity="0.7"/>
+    <circle cx="0" cy="0" r="8" fill="none" stroke="white" stroke-width="1" opacity="0.5"/>
+    <circle cx="0" cy="0" r="4" fill="white" opacity="0.9"/>
+  </g>
+  
+  <!-- Stars (optimization) -->
+  <g fill="white" opacity="0.85">
+    <polygon points="68,15 70,22 77,22 71,27 73,34 68,30 63,34 65,27 59,22 66,22"/>
+    <circle cx="35" cy="65" r="2.5"/>
+    <circle cx="65" cy="70" r="2"/>
+    <circle cx="28" cy="72" r="2"/>
+  </g>
+  
+  <!-- Bottom accent bar -->
+  <rect x="0" y="82" width="100" height="18" fill="url(#grad2)" opacity="0.85"/>
+  
+  <!-- Checkmark in accent bar (success) -->
+  <g transform="translate(50, 91)">
+    <path d="M -8 0 L -2 6 L 8 -4" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
