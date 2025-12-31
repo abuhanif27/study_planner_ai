@@ -1,14 +1,9 @@
 import numpy as np
 import random
-from datetime import datetime, timedelta
-import json
 
 
 class FuzzyStressCalculator:
-    """Fuzzy logic system to calculate daily stress level (0-1)."""
-    
     def triangular_mf(self, x, a, b, c):
-        """Triangular membership function."""
         if a == b:
             if x <= a:
                 return 1.0
@@ -33,7 +28,6 @@ class FuzzyStressCalculator:
             return (c - x) / (c - b)
     
     def trapezoidal_mf(self, x, a, b, c, d):
-        """Trapezoidal membership function."""
         if x < a or x > d:
             return 0.0
         elif a <= x <= b:
@@ -49,7 +43,6 @@ class FuzzyStressCalculator:
         return 0.0
     
     def fuzzify_hours(self, hours):
-        """Convert hours to fuzzy membership values."""
         hours = max(0, min(hours, 8))
         
         if hours <= 0:
@@ -80,7 +73,6 @@ class FuzzyStressCalculator:
         return {'low': low, 'medium': medium, 'high': high}
     
     def fuzzify_difficulty(self, difficulty):
-        """Convert difficulty to fuzzy membership values."""
         difficulty = max(1, min(difficulty, 5))
         
         if difficulty <= 1:
@@ -111,7 +103,6 @@ class FuzzyStressCalculator:
         return {'easy': easy, 'medium': medium, 'hard': hard}
     
     def apply_fuzzy_rules(self, hours_mf, difficulty_mf):
-        """Apply fuzzy rules to calculate stress membership values."""
         stress_mf = {'low': 0, 'medium': 0, 'high': 0}
         
         stress_mf['low'] += min(hours_mf['low'], difficulty_mf['easy']) * 0.8
@@ -130,14 +121,12 @@ class FuzzyStressCalculator:
         return stress_mf
     
     def defuzzify(self, stress_mf):
-        """Defuzzification using Center of Gravity."""
         stress_value = (stress_mf['low'] * 0.2 + 
                        stress_mf['medium'] * 0.5 + 
                        stress_mf['high'] * 0.8)
         return min(1.0, max(0.0, stress_value))
     
     def calculate_stress(self, daily_hours, avg_difficulty):
-        """Calculate stress for a day."""
         hours_mf = self.fuzzify_hours(daily_hours)
         difficulty_mf = self.fuzzify_difficulty(avg_difficulty)
         stress_mf = self.apply_fuzzy_rules(hours_mf, difficulty_mf)
@@ -146,8 +135,6 @@ class FuzzyStressCalculator:
 
 
 class StudyScheduleGA:
-    """Genetic Algorithm for study schedule optimization."""
-    
     def __init__(self, courses, days=7, slots_per_day=3, max_hours_per_day=4):
         self.courses = courses
         self.days = days
@@ -158,7 +145,7 @@ class StudyScheduleGA:
         self.fuzzy_calculator = FuzzyStressCalculator()
         
     def create_random_chromosome(self):
-        """Create a random valid schedule chromosome."""
+
         chromosome = []
         daily_slots = [0] * self.days
         
@@ -182,11 +169,9 @@ class StudyScheduleGA:
         return chromosome
     
     def create_initial_population(self, pop_size=50):
-        """Create initial population."""
         return [self.create_random_chromosome() for _ in range(pop_size)]
     
     def evaluate_fitness(self, chromosome):
-        """Calculate fitness score for a schedule."""
         alpha = 5.0
         beta = 2.0
         gamma = 3.0
@@ -224,7 +209,6 @@ class StudyScheduleGA:
         return max(0, fitness)
     
     def selection(self, population, fitness_scores, tournament_size=3):
-        """Tournament selection."""
         selected = []
         for _ in range(len(population)):
             idx = random.sample(range(len(population)), tournament_size)
@@ -233,7 +217,6 @@ class StudyScheduleGA:
         return selected
     
     def is_valid_chromosome(self, chromosome):
-        """Check if chromosome respects all constraints."""
         for day in range(self.days):
             day_start = day * self.slots_per_day
             day_end = day_start + self.slots_per_day
@@ -245,7 +228,6 @@ class StudyScheduleGA:
         return True
     
     def fix_chromosome(self, chromosome):
-        """Fix chromosome to respect max_hours_per_day constraint."""
         fixed = chromosome.copy()
         for day in range(self.days):
             day_start = day * self.slots_per_day
@@ -266,7 +248,6 @@ class StudyScheduleGA:
         return fixed
     
     def crossover(self, parent1, parent2, crossover_rate=0.8):
-        """One-point crossover with constraint validation."""
         if random.random() < crossover_rate:
             point = random.randint(1, len(parent1) - 1)
             child1 = parent1[:point] + parent2[point:]
@@ -281,7 +262,6 @@ class StudyScheduleGA:
         return parent1.copy(), parent2.copy()
     
     def mutate(self, chromosome, mutation_rate=0.1):
-        """Mutation: randomly change gene while respecting constraints."""
         mutated = chromosome.copy()
         for i in range(len(mutated)):
             if random.random() < mutation_rate:
@@ -305,7 +285,6 @@ class StudyScheduleGA:
         return mutated
     
     def evolve(self, pop_size=50, generations=100):
-        """Main GA evolution loop."""
         population = self.create_initial_population(pop_size)
         best_fitness_history = []
         
@@ -335,7 +314,7 @@ class StudyScheduleGA:
         return best_schedule, best_fitness_history
     
     def schedule_to_readable(self, chromosome):
-        """Convert chromosome to readable schedule."""
+        
         schedule = {}
         day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
         slot_names = ['Morning', 'Afternoon', 'Evening']
@@ -371,7 +350,6 @@ class StudyScheduleGA:
     
     @staticmethod
     def stress_label(stress_value):
-        """Convert stress numeric value to label."""
         if stress_value < 0.33:
             return "Low"
         elif stress_value < 0.67:
@@ -381,7 +359,6 @@ class StudyScheduleGA:
 
 
 def main():
-    """Main execution."""
     print("=" * 70)
     print("FUZZY-GA BASED PERSONALIZED STUDY SCHEDULE GENERATOR")
     print("=" * 70)
