@@ -16,29 +16,26 @@ from tkinter import ttk, messagebox, filedialog, scrolledtext
 from datetime import datetime, timedelta
 import threading
 
-# Color scheme for modern UI
+
 COLORS = {
-    'primary': '#2196F3',      # Blue
-    'success': '#4CAF50',      # Green
-    'warning': '#FF9800',      # Orange
-    'danger': '#F44336',       # Red
-    'info': '#00BCD4',         # Cyan
-    'light_bg': '#F5F5F5',     # Light gray
-    'dark_bg': '#FAFAFA',      # Very light gray
-    'text': '#212121',         # Dark text
-    'light_text': '#666666'    # Light text
+    'primary': '#2196F3',      
+    'success': '#4CAF50',      
+    'warning': '#FF9800',      
+    'danger': '#F44336',       
+    'info': '#00BCD4',         
+    'light_bg': '#F5F5F5',     
+    'dark_bg': '#FAFAFA',      
+    'text': '#212121',         
+    'light_text': '#666666'    
 }
 
-# ============================================================================
-# PART 1: FUZZY LOGIC SYSTEM FOR STRESS CALCULATION
-# ============================================================================
 
 class FuzzyStressCalculator:
     """Fuzzy logic system to calculate daily stress level."""
     
     def triangular_mf(self, x, a, b, c):
         """Triangular membership function with proper boundary handling"""
-        # Handle edge case where a == b (left shoulder)
+        
         if a == b:
             if x <= a:
                 return 1.0
@@ -46,7 +43,7 @@ class FuzzyStressCalculator:
                 return 0.0
             else:
                 return (c - x) / (c - b) if c != b else 0.0
-        # Handle edge case where b == c (right shoulder)
+        
         if b == c:
             if x >= c:
                 return 1.0
@@ -54,18 +51,18 @@ class FuzzyStressCalculator:
                 return 0.0
             else:
                 return (x - a) / (b - a) if b != a else 0.0
-        # Normal triangular case
+        
         if x < a or x > c:
             return 0.0
         elif x == b:
             return 1.0
         elif a <= x < b:
             return (x - a) / (b - a)
-        else:  # b < x <= c
+        else:  
             return (c - x) / (c - b)
     
     def trapezoidal_mf(self, x, a, b, c, d):
-        """Trapezoidal membership function with proper boundary handling"""
+
         if x < a or x > d:
             return 0.0
         elif a <= x <= b:
@@ -81,12 +78,7 @@ class FuzzyStressCalculator:
         return 0.0
     
     def fuzzify_hours(self, hours):
-        """Convert hours to fuzzy membership values"""
-        # Clamp hours to valid range [0, 8]
         hours = max(0, min(hours, 8))
-        
-        # Define membership functions for hours (0-6 range, extended to 8)
-        # Low: peaks at 0, goes to 0 at 2
         if hours <= 0:
             low = 1.0
         elif hours < 2:
@@ -94,7 +86,6 @@ class FuzzyStressCalculator:
         else:
             low = 0.0
             
-        # Medium: rises from 1, peaks at 3, falls to 0 at 5
         if hours <= 1:
             medium = 0.0
         elif hours < 3:
@@ -106,7 +97,7 @@ class FuzzyStressCalculator:
         else:
             medium = 0.0
             
-        # High: rises from 4, peaks at 6+
+    
         if hours <= 4:
             high = 0.0
         elif hours < 6:
@@ -117,11 +108,8 @@ class FuzzyStressCalculator:
         return {'low': low, 'medium': medium, 'high': high}
     
     def fuzzify_difficulty(self, difficulty):
-        """Convert difficulty to fuzzy membership values"""
-        # Clamp difficulty to valid range [1, 5]
         difficulty = max(1, min(difficulty, 5))
         
-        # Easy: peaks at 1, goes to 0 at 2.5
         if difficulty <= 1:
             easy = 1.0
         elif difficulty < 2.5:
@@ -129,7 +117,6 @@ class FuzzyStressCalculator:
         else:
             easy = 0.0
             
-        # Medium: rises from 2, peaks at 3, falls to 0 at 4
         if difficulty <= 2:
             medium = 0.0
         elif difficulty < 3:
@@ -141,7 +128,7 @@ class FuzzyStressCalculator:
         else:
             medium = 0.0
             
-        # Hard: rises from 3.5, peaks at 5
+
         if difficulty <= 3.5:
             hard = 0.0
         elif difficulty < 5:
@@ -164,28 +151,27 @@ class FuzzyStressCalculator:
         """
         stress_mf = {'low': 0, 'medium': 0, 'high': 0}
         
-        # Rule 1: low hours AND easy difficulty → low stress
+        # Rule 1: low hours AND easy difficulty -> low stress
         stress_mf['low'] += min(hours_mf['low'], difficulty_mf['easy']) * 0.8
         
-        # Rule 2: medium hours AND medium difficulty → medium stress
+        # Rule 2: medium hours AND medium difficulty -> medium stress
         stress_mf['medium'] += min(hours_mf['medium'], difficulty_mf['medium']) * 0.7
         
-        # Rule 3: high hours AND hard difficulty → high stress
+        # Rule 3: high hours AND hard difficulty -> high stress
         stress_mf['high'] += min(hours_mf['high'], difficulty_mf['hard']) * 0.9
         
-        # Rule 4: high hours AND easy difficulty → low stress
+        # Rule 4: high hours AND easy difficulty -> low stress
         stress_mf['low'] += min(hours_mf['high'], difficulty_mf['easy']) * 0.6
         
-        # Rule 5: medium hours AND hard difficulty → high stress
+        # Rule 5: medium hours AND hard difficulty -> high stress
         stress_mf['high'] += min(hours_mf['medium'], difficulty_mf['hard']) * 0.9
         
-        # Rule 6: low hours AND hard difficulty → HIGH stress (not enough time for hard course!)
+        # Rule 6: low hours AND hard difficulty -> HIGH stress (not enough time for hard course!)
         stress_mf['high'] += min(hours_mf['low'], difficulty_mf['hard']) * 0.95
         
-        # Rule 7: low hours AND medium difficulty → medium stress
+        # Rule 7: low hours AND medium difficulty -> medium stress
         stress_mf['medium'] += min(hours_mf['low'], difficulty_mf['medium']) * 0.7
         
-        # Normalize
         total = sum(stress_mf.values())
         if total > 0:
             for key in stress_mf:
@@ -201,7 +187,6 @@ class FuzzyStressCalculator:
         return min(1.0, max(0.0, stress_value))
     
     def calculate_stress(self, daily_hours, avg_difficulty):
-        """Main method: Calculate stress for a day"""
         hours_mf = self.fuzzify_hours(daily_hours)
         difficulty_mf = self.fuzzify_difficulty(avg_difficulty)
         stress_mf = self.apply_fuzzy_rules(hours_mf, difficulty_mf)
@@ -209,15 +194,9 @@ class FuzzyStressCalculator:
         return stress_value
 
 
-# ============================================================================
-# PART 2: GENETIC ALGORITHM FOR SCHEDULE OPTIMIZATION
-# ============================================================================
-
 class StudyScheduleGA:
-    """Genetic Algorithm for study schedule optimization."""
     
     def __init__(self, courses, days=7, slots_per_day=3, max_hours_per_day=4):
-        """Initialize GA parameters."""
         self.courses = courses
         self.days = days
         self.slots_per_day = slots_per_day
