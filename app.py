@@ -1,7 +1,4 @@
-"""
-Flask Web App - Fuzzy-GA Study Schedule Generator
-Modern Material Design UI with responsive layout
-"""
+
 
 from flask import Flask, render_template, request, jsonify, send_file
 from reportlab.lib.pagesizes import letter, A4
@@ -19,7 +16,6 @@ import threading
 
 app = Flask(__name__)
 
-# Add cache control headers
 @app.after_request
 def add_cache_headers(response):
     """Add cache control headers to prevent caching of HTML"""
@@ -29,13 +25,12 @@ def add_cache_headers(response):
         response.headers['Expires'] = '0'
     return response
 
-# Import GA classes from the existing file
+
 import sys
 sys.path.insert(0, '.')
 
 from fuzzy_ga_study_planner_gui import FuzzyStressCalculator, StudyScheduleGA
 
-# Store results in memory
 results_cache = {}
 generation_updates = {}
 
@@ -46,10 +41,8 @@ def index():
 
 @app.route('/api/courses', methods=['POST'])
 def add_course():
-    """Add a course with validation"""
     data = request.json
     
-    # Validation
     errors = []
     
     name = data.get('name', '').strip()
